@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+
+  app:
+    image: schneidera/dolibarr:1.3
+    networks:
+      - dolibarr_net
+    environment:
+      - DOLI_DB_HOST=db # same as mysql container name
+      - DOLI_DB_NAME=dolibarr # same as mysql MYSQL_DATABASE env name
+      - DOLI_DB_USER=dolibarr # same as mysql MYSQL_USER env name
+      - DOLI_DB_PASSWORD=dolibarr # same as mysql MYSQL_PASSWORD env name
+    ports:
+      - "80:80"
+    volumes:
+      - dolibarr_conf:/var/www/html/htdocs/conf
+      - dolibarr_docs:/var/www/html/htdocs/documents
+
+  db:
+    image: mariadb:latest
+    networks:
+      - dolibarr_net
+    command: --character_set_client=utf8 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --character-set-client-handshake=FALSE
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: dolibarr
+      MYSQL_USER: dolibarr
+      MYSQL_PASSWORD: dolibarr
+      MYSQL_DATABASE: dolibarr
+    volumes:
+      - dolibarr_db:/var/lib/mysql 
+
+networks:
+  dolibarr_net: {}
+
+volumes: 
+  dolibarr_conf: {}
+  dolibarr_docs: {}
+  dolibarr_db: {}

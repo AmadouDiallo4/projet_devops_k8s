@@ -1,0 +1,52 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: db
+  name: db
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: db
+    spec:
+      containers:
+      - args:
+        - --character_set_client=utf8
+        - --character-set-server=utf8mb4
+        - --collation-server=utf8mb4_unicode_ci
+        - --character-set-client-handshake=FALSE
+        env:
+        - name: MYSQL_DATABASE
+          value: dolibarr
+        - name: MYSQL_PASSWORD
+          value: dolibarr
+        - name: MYSQL_ROOT_PASSWORD
+          value: dolibarr
+        - name: MYSQL_USER
+          value: dolibarr
+        image: mariadb:latest
+        name: db
+        ports:
+        - containerPort: 3306
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: dolibarr-db
+      restartPolicy: Always
+      volumes:
+      - name: dolibarr-db
+        persistentVolumeClaim:
+          claimName: dolibarr-db
+status: {}
